@@ -21,6 +21,10 @@ class Advertiser(BaseAdvertising):
         self.views += 1
         self.save()
 
+    def incClicks(self):
+        self.clicks +=1 
+        self.save()
+
 class Ad(BaseAdvertising):
     link = models.URLField(max_length=200)
     img = models.ImageField(upload_to ='uploads/% Y/% m/% d/')
@@ -29,4 +33,9 @@ class Ad(BaseAdvertising):
     def incViews(self):
         self.views += 1
         self.advertiser.incViews()
+        self.save()
+
+    def incClicks(self):
+        self.clicks +=1 
+        self.advertiser.incClicks()
         self.save()

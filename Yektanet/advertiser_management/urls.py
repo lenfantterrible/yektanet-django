@@ -1,6 +1,7 @@
 from django.urls import include, path
-from .views import AdvertiserListView
+from .views import AdRedirectView, AdvertiserListView
 
 urlpatterns = [
     path('', AdvertiserListView.as_view(), name = 'advertiser_list'),
+    path('click/<int:pk>/', AdRedirectView.as_view(), name='ad_redirect'),
 ]
