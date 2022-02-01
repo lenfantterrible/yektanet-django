@@ -16,9 +16,17 @@ class BaseAdvertising(models.Model):
         abstract = True
 
 class Advertiser(BaseAdvertising):
-    pass 
+    
+    def incViews(self):
+        self.views += 1
+        self.save()
 
 class Ad(BaseAdvertising):
     link = models.URLField(max_length=200)
     img = models.ImageField(upload_to ='uploads/% Y/% m/% d/')
     advertiser = models.ForeignKey(Advertiser, on_delete=models.CASCADE, related_name="ads")
+
+    def incViews(self):
+        self.views += 1
+        self.advertiser.incViews()
+        self.save()
