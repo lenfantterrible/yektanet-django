@@ -1,3 +1,4 @@
+{% load widget_tweaks %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,15 +8,18 @@
     <title>Ad View</title>
 </head>
 <body>
-<div class="container" >
+<div class="form-group w-25 p-3 justify-content-center">
     <form {% if form.is_multipart %}enctype="multipart/form-data"{% endif %} action="" method="post" >{% csrf_token %}
         <fieldset>
-            <ul>
-                {{ form.as_p }}
-                <li>
-                        <button type="submit" class="primaryAction" name="submit">Submit</button>
-                </li>
-            </ul>
+                Title: {% render_field form.name class="form-control"%}
+                <br>
+                Link: {% render_field form.link class="form-control" %}
+                <br>
+                Advertiser: {% render_field form.advertiser class="form-control" %}
+                <br>
+                {% render_field form.img class="form-control-file" %}
+                <br>
+                        <button type="submit" class="btn btn-success" name="submit">Submit</button>
         </fieldset>
     </form>
 
