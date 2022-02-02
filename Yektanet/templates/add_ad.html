@@ -15,9 +15,10 @@
                 <br>
                 Link: {% render_field form.link class="form-control" %}
                 <br>
-                Advertiser: {% render_field form.advertiser class="form-control" %}
+                Advertiser: {% render_field form.advertiser class="form-select form-select-lg w-100 p-1" %}
                 <br>
-                {% render_field form.img class="form-control-file" %}
+                <br>
+                Image: {% render_field form.img class="form-control-file" %}
                 <br>
                         <button type="submit" class="btn btn-success" name="submit">Submit</button>
         </fieldset>
