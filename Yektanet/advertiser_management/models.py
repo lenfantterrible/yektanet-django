@@ -28,7 +28,7 @@ class Advertiser(BaseAdvertising):
 
 class Ad(BaseAdvertising):
     link = models.URLField(max_length=200)
-    img = models.ImageField(upload_to ='uploads')
+    img = models.ImageField(upload_to ='images/')
     advertiser = models.ForeignKey(Advertiser, on_delete=models.CASCADE, related_name="ads")
 
     def incViews(self):
@@ -54,6 +54,13 @@ class Ad(BaseAdvertising):
             image.save(self.img.path.replace(" ", "_"))
         else:
             super(Ad, self).save()
+
+    @property
+    def image_url(self):
+
+        if self.img:
+            return getattr(self.img, 'url', None)
+        return None
 
 
 
