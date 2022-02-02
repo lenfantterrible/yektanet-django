@@ -1,4 +1,5 @@
 from django.db import models
+from PIL import Image 
 
 class BaseAdvertising(models.Model):
 
@@ -39,3 +40,20 @@ class Ad(BaseAdvertising):
         self.clicks +=1 
         self.advertiser.incClicks()
         self.save()
+
+    def save(self):      
+        if not self.img:
+            return 
+        
+        if self._state.adding:
+            super(Ad, self).save()
+            image = Image.open(self.img)
+            (width, height) = image.size     
+            size = ( 300, 300)
+            image = image.resize(size, Image.ANTIALIAS)
+            image.save(self.img.path.replace(" ", "_"))
+        else:
+            super(Ad, self).save()
+
+
+
