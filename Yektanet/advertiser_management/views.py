@@ -42,23 +42,6 @@ class AdRedirectView(RedirectView):
         self.url = ad.link 
         return super().get_redirect_url(*args, **kwargs)
 
-def add_ad(request):
-    if request.method == 'POST': 
-        form = AdForm(request.POST, request.FILES) 
-        if form.is_valid(): 
-            ad = Ad()
-            ad.name = form.cleaned_data['name']
-            ad.advertiser = form.cleaned_data['advertiser']
-            ad.link = form.cleaned_data['link']
-            ad.img = form.cleaned_data['img']
-            ad.save()
-
-            return HttpResponseRedirect('/') 
-    else:
-        form = AdForm() 
-
-    return render(request, 'add_ad.html', {'form': form})
-
 class AddAdView(FormView):
     template_name = 'add_ad.html' 
     form_class = AdForm 
