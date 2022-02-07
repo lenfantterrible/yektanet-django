@@ -1,3 +1,4 @@
+from webbrowser import get
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
@@ -6,9 +7,8 @@ from django.views.generic.list import ListView
 from .models import Advertiser, Ad, Click, View 
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import RedirectView
+from django.views.generic.edit import FormView
 from .forms import AdForm
-
-
 class AdvertiserListView(ListView):
 
     model = Advertiser
@@ -58,6 +58,16 @@ def add_ad(request):
         form = AdForm() 
 
     return render(request, 'add_ad.html', {'form': form})
+
+class AddAdView(FormView):
+    template_name = 'add_ad.html' 
+    form_class = AdForm 
+    success_url = '/'
+
+    def form_valid(self, form):
+        Ad.objects.create(name = form.cleaned_data['name'], advertiser = form.cleaned_data['advertiser'], link = form.cleaned_data['link'], img = form.cleaned_data['img'])
+        return super().form_valid(form)
+
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')

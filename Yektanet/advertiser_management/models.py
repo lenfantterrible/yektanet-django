@@ -24,7 +24,7 @@ class Ad(BaseAdvertising):
     advertiser = models.ForeignKey(Advertiser, on_delete=models.CASCADE, related_name="ads")
     approved = models.BooleanField(default=False)
 
-    def save(self):      
+    def save(self, *args, **kwargs):      
         if not self.img:
             return 
         
