@@ -3,10 +3,10 @@ from .models import Advertiser, Ad
 
 @admin.register(Advertiser) 
 class AdvertiserAdmin(admin.ModelAdmin):
-    list_display = ('name', 'clicks', 'views')
+    list_display = ('name',)
     fields = ('name', )
 
 @admin.register(Ad) 
 class AdAdmin(admin.ModelAdmin):
-    list_display = ('name', 'advertiser', 'link', 'clicks', 'views')
+    list_display = ('name', 'advertiser', 'link')
     fields = ('name', 'link', 'img', 'advertiser')

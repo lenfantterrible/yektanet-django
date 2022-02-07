@@ -1,11 +1,10 @@
 from django.db import models
 from PIL import Image 
 
+
 class BaseAdvertising(models.Model):
 
     name = models.CharField(max_length=50)
-    clicks = models.IntegerField(default=0)
-    views = models.IntegerField(default=0)
 
     def __str__(self) -> str:
         return self.name 
@@ -17,29 +16,12 @@ class BaseAdvertising(models.Model):
         abstract = True
 
 class Advertiser(BaseAdvertising):
-    
-    def incViews(self):
-        self.views += 1
-        self.save()
-
-    def incClicks(self):
-        self.clicks +=1 
-        self.save()
+    pass 
 
 class Ad(BaseAdvertising):
     link = models.URLField(max_length=200)
     img = models.ImageField(upload_to ='images/')
     advertiser = models.ForeignKey(Advertiser, on_delete=models.CASCADE, related_name="ads")
-
-    def incViews(self):
-        self.views += 1
-        self.advertiser.incViews()
-        self.save()
-
-    def incClicks(self):
-        self.clicks +=1 
-        self.advertiser.incClicks()
-        self.save()
 
     def save(self):      
         if not self.img:
@@ -61,6 +43,26 @@ class Ad(BaseAdvertising):
         if self.img:
             return getattr(self.img, 'url', None)
         return None
+
+
+class Action(models.Model):
+
+    ad = models.ForeignKey(Ad, on_delete=models.CASCADE)
+    time = models.DateTimeField(auto_now_add=True) 
+    ip = models.GenericIPAddressField(protocol="both", unpack_ipv4=False)
+
+    class Meta: 
+        abstract = True 
+
+class Click(Action): 
+    
+    class Meta:
+        default_related_name = 'clicks'
+
+class View(Action): 
+    
+    class Meta:
+        default_related_name = 'views'
 
 
 
