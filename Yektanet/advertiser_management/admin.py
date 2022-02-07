@@ -8,5 +8,7 @@ class AdvertiserAdmin(admin.ModelAdmin):
 
 @admin.register(Ad) 
 class AdAdmin(admin.ModelAdmin):
-    list_display = ('name', 'advertiser', 'link')
-    fields = ('name', 'link', 'img', 'advertiser')
+    list_display = ('name', 'advertiser', 'link', 'approved')
+    fields = ('name', 'link', 'img', 'advertiser', 'approved')
+    list_filter = ('approved',)
+    search_fields = ('name', )

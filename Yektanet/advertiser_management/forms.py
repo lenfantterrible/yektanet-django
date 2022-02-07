@@ -5,5 +5,5 @@ class AdForm(ModelForm):
     class Meta:
         model = Ad
         fields = '__all__'
-        exclude = ('views', 'clicks')
+        exclude = ('views', 'clicks', 'approved')
 

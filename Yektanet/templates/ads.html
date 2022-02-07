@@ -14,6 +14,7 @@
             <div class="card-body">
                 <div class="row">
 		    {% for ad in advertiser.ads.all %}
+                {% if ad.approved %}
 		        <div class="card col-md-2 p-0 mx-2">
 		            <a href="/click/{{ ad.id }}/">
 		                <img src="{{ ad.image_url|default_if_none:'#' }}"
@@ -23,6 +24,7 @@
 		                </div>
 		            </a>
 		        </div>
+                {% endif %}
 		    {% endfor %}
                 </div>
             </div>

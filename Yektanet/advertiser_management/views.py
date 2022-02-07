@@ -23,7 +23,8 @@ class AdvertiserListView(ListView):
         context = super().get_context_data(**kwargs)
         for advertiser in context['advertisers']:
             for ad in advertiser.ads.all():
-                View.objects.create(ad=ad, ip=self.ip)
+                if(ad.approved):
+                    View.objects.create(ad=ad, ip=self.ip)
         return context
 
 class AdRedirectView(RedirectView):

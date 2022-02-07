@@ -22,6 +22,7 @@ class Ad(BaseAdvertising):
     link = models.URLField(max_length=200)
     img = models.ImageField(upload_to ='images/')
     advertiser = models.ForeignKey(Advertiser, on_delete=models.CASCADE, related_name="ads")
+    approved = models.BooleanField(default=False)
 
     def save(self):      
         if not self.img:
