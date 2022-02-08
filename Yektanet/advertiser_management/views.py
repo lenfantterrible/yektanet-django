@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormView
 from .forms import AdForm
-from django.db.models import Count, F, Sum, Q
+from django.db.models import Count, F, Sum, Q, Avg
 
 class AdvertiserListView(ListView):
 
@@ -71,7 +71,7 @@ class StatsView(TemplateView):
         q1 = q1.order_by('id', '-views__time__date')
         context['first_stats'] = q1
 
-
+        context['second_stats'] = Ad.objects.filter(clicks__ip = F('views__ip')).aggregate(avg=Avg(F('clicks__time') - F('views__time')))
         
         return context
 
