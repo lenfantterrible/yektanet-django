@@ -19,7 +19,7 @@ class AdvertiserListView(ListView):
     template_name = 'ads.html'
 
     def dispatch(self, request, *args, **kwargs):
-        self.ip = get_client_ip(request)
+        self.ip = request.ip
         return super().dispatch(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
@@ -36,7 +36,7 @@ class AdRedirectView(RedirectView):
     query_string = True
 
     def dispatch(self, request, *args, **kwargs):
-        self.ip = get_client_ip(request)
+        self.ip = request.ip
         return super().dispatch(request, *args, **kwargs)
     
     def get_redirect_url(self, *args, **kwargs):
@@ -56,6 +56,7 @@ class AddAdView(FormView):
 
 
 class StatsView(TemplateView):
+
     template_name ='stats.html'
 
     def get_context_data(self, **kwargs):
@@ -74,13 +75,3 @@ class StatsView(TemplateView):
         context['second_stats'] = Ad.objects.filter(clicks__ip = F('views__ip'), clicks__time__date=F('views__time__date'),  clicks__time__hour=F('views__time__hour')).aggregate(avg=Avg(F('clicks__time') - F('views__time')))
         
         return context
-
-
-def get_client_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
-
