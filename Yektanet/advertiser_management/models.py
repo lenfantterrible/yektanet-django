@@ -66,4 +66,3 @@ class View(Action):
         default_related_name = 'views'
 
 
-

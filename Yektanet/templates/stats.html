@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          crossorigin="anonymous">
+    <title>Ad View</title>
+</head>
+<body>
+<div class="container">
+{% for entry in first_stats %}
+
+    Ad Id: {{ entry.id }}<br>
+    Ad Name: {{ entry.name }} <br>
+    Total Count: {{ entry.total_count }}<br>
+    in Time: {{ entry.views__time__year }}/{{ entry.views__time__month }}/{{ entry.views__time__day }} {{ entry.views__time__hour}}
+
+    <br><br>
+</br>
+    {% endfor %}
+</div>
+</body>
+</html>

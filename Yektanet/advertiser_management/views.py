@@ -4,11 +4,14 @@ from django.shortcuts import render
 
 from django.utils import timezone
 from django.views.generic.list import ListView
+from django.views.generic import TemplateView
 from .models import Advertiser, Ad, Click, View 
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormView
 from .forms import AdForm
+from django.db.models import Count, F, Sum
+
 class AdvertiserListView(ListView):
 
     model = Advertiser
@@ -52,6 +55,16 @@ class AddAdView(FormView):
         return super().form_valid(form)
 
 
+class StatsView(TemplateView):
+    template_name ='stats.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        q1 = Ad.objects.values('id', 'name', 'views__time__year', 'views__time__month', 'views__time__day', 'views__time__hour').annotate(total_count=Count('clicks',distinct=True)+Count('views',distinct=True)).order_by()
+        context['first_stats'] = q1
+        return context
+
+
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
@@ -59,3 +72,4 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
