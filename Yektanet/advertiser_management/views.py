@@ -60,32 +60,19 @@ class StatsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        q1 = View.objects.values('ad', 'ad__name', 'time__date', 'time__hour').annotate(count=Count('*')).order_by('time__date')
-        q2 = Click.objects.values('ad', 'ad__name', 'time__date', 'time__hour').annotate(count=Count('*')).order_by('time__date')   
-
-        first = dict() 
-
-        for entry in q1: 
-            if((entry['ad'], entry['ad__name']) not in first):
-                first[(entry['ad'], entry['ad__name'])] = []
-            first[(entry['ad'], entry['ad__name'])].append((entry['time__date'], entry['time__hour'], entry['count']))
-
-        for entry in q2: 
-            if((entry['ad'], entry['ad__name']) not in first):
-                first[(entry['ad'], entry['ad__name'])] = []
-                first[(entry['ad'], entry['ad__name'])].append((entry['time__date'], entry['time__hour'], entry['count']))
-
-            elif first[(entry['ad'], entry['ad__name'])][0] == entry['time__date'] and first[(entry['ad'], entry['ad__name'])][1] == entry['time__hour']:
-                first[(entry['ad'], entry['ad__name'])][2] += entry['count']
-            
-            else: 
-                first[(entry['ad'], entry['ad__name'])].append((entry['time__date'], entry['time__hour'], entry['count']))
-            
+        # q1 = View.objects.values('ad', 'ad__name', 'time__date', 'time__hour').annotate(count=Count('*')).order_by('time__date')
+        # q2 = Click.objects.values('ad', 'ad__name', 'time__date', 'time__hour').annotate(count=Count('*')).order_by('time__date')   
 
 
+        # q1 = Ad.objects.values('id', 'name', 'views__time__date', 'views__time__hour').distinct().values('id', 'name', 'clicks__time__date', 'clicks__time__hour').annotate(count=Count('clicks', distinct=True)+Count('views',distinct=True)).order_by('id', '-views__time__date')
+        q1 =  Ad.objects.datetimes('clicks__time', 'hour').distinct().annotate(count=Count('views',distinct=True))
+        q1 = q1.values('id', 'name', 'count', 'views__time__date', 'views__time__hour')
+        q1 = q1.annotate(total_count=Count('clicks', distinct=True)+F('count'), views_count=Count('views', distinct=True), clicks_count=Count('clicks', distinct=True), rate=Count('clicks', distinct=True) * 100/ F('count'))
+        q1 = q1.order_by('id', '-views__time__date')
+        context['first_stats'] = q1
 
-        context['first_stats'] = first
 
+        
         return context
 
 

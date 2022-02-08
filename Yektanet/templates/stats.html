@@ -7,28 +7,37 @@
     <title>Ad View</title>
 </head>
 <body>
-<div class="container">
+<div class="container" style="width:100%">
 
-
-        {% for key,entry in first_stats.items %}
-        {{ key.1 }}<br><br>
-        <table style="width:100%">
-            <tr>
-              <th>Count</th>
-              <th>Time</th>
-    
-            </tr>
-        {% for stats in entry %}
-
+    <table style="width:100%">
         <tr>
-            <td>{{ stats.2 }}</td>
-           <td> {{ stats.0}} {{ stats.1 }}</td>
-           <tr>
-        {% endfor %}
-    </table> 
-    <br><br>
+          <th>Id</th>
+          <th>Name</th>
+          <th>Views</th>
+          <th>Clicks</th>
+
+          <th>Total Count</th>
+          <th>Rate</th>
+
+          <th>Time</th>
+
+        </tr>
+        {% for entry in first_stats %}
+        <tr>
+
+     <td>{{ entry.id }}</td>
+     <td>{{ entry.name }} </td>
+     <td>{{ entry.views_count }} </td>
+     <td>{{ entry.clicks_count }} </td>
+
+     <td>{{ entry.total_count }}</td>
+     <td>{{ entry.rate }}</td>
+
+    <td> {{ entry.views__time__date }} {{ entry.views__time__hour}}</td>
+        </tr>
     {% endfor %}
 
+      </table> 
 
 
     
