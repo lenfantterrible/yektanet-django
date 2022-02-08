@@ -8,16 +8,30 @@
 </head>
 <body>
 <div class="container">
-{% for entry in first_stats %}
 
-    Ad Id: {{ entry.id }}<br>
-    Ad Name: {{ entry.name }} <br>
-    Total Count: {{ entry.total_count }}<br>
-    in Time: {{ entry.views__time__year }}/{{ entry.views__time__month }}/{{ entry.views__time__day }} {{ entry.views__time__hour}}
 
+        {% for key,entry in first_stats.items %}
+        {{ key.1 }}<br><br>
+        <table style="width:100%">
+            <tr>
+              <th>Count</th>
+              <th>Time</th>
+    
+            </tr>
+        {% for stats in entry %}
+
+        <tr>
+            <td>{{ stats.2 }}</td>
+           <td> {{ stats.0}} {{ stats.1 }}</td>
+           <tr>
+        {% endfor %}
+    </table> 
     <br><br>
-</br>
     {% endfor %}
+
+
+
+    
 </div>
 </body>
 </html>

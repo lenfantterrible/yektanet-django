@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormView
 from .forms import AdForm
-from django.db.models import Count, F, Sum
+from django.db.models import Count, F, Sum, Q
 
 class AdvertiserListView(ListView):
 
@@ -60,8 +60,32 @@ class StatsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        q1 = Ad.objects.values('id', 'name', 'views__time__year', 'views__time__month', 'views__time__day', 'views__time__hour').annotate(total_count=Count('clicks',distinct=True)+Count('views',distinct=True)).order_by()
-        context['first_stats'] = q1
+        q1 = View.objects.values('ad', 'ad__name', 'time__date', 'time__hour').annotate(count=Count('*')).order_by('time__date')
+        q2 = Click.objects.values('ad', 'ad__name', 'time__date', 'time__hour').annotate(count=Count('*')).order_by('time__date')   
+
+        first = dict() 
+
+        for entry in q1: 
+            if((entry['ad'], entry['ad__name']) not in first):
+                first[(entry['ad'], entry['ad__name'])] = []
+            first[(entry['ad'], entry['ad__name'])].append((entry['time__date'], entry['time__hour'], entry['count']))
+
+        for entry in q2: 
+            if((entry['ad'], entry['ad__name']) not in first):
+                first[(entry['ad'], entry['ad__name'])] = []
+                first[(entry['ad'], entry['ad__name'])].append((entry['time__date'], entry['time__hour'], entry['count']))
+
+            elif first[(entry['ad'], entry['ad__name'])][0] == entry['time__date'] and first[(entry['ad'], entry['ad__name'])][1] == entry['time__hour']:
+                first[(entry['ad'], entry['ad__name'])][2] += entry['count']
+            
+            else: 
+                first[(entry['ad'], entry['ad__name'])].append((entry['time__date'], entry['time__hour'], entry['count']))
+            
+
+
+
+        context['first_stats'] = first
+
         return context
 
 
