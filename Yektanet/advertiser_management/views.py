@@ -62,20 +62,14 @@ class StatsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        q1 =  Ad.objects.values('id', 'name', 'clicks__time__date', 'clicks__time__hour').annotate(count=Count('clicks', distinct=True))
-        q1 = q1.values('id', 'name', 'views__time__date', 'views__time__hour')
-        q1 = q1.annotate(total_count=Count('views', distinct=True)+F('count'), views_count=Count('views', distinct=True), clicks_count=F('count'), rate= F('count')* 100/ Count('views', distinct=True))
-        q1 = q1.order_by('id', '-views__time__date')
-
-        q2 =  Ad.objects.values('id', 'name', 'views__time__date', 'views__time__hour').annotate(count=Count('views', distinct=True))
-        q2 = q2.annotate(total_count=Count('clicks', distinct=True)+F('count'), clicks_count=Count('clicks', distinct=True), views_count=F('count'), rate= Count('clicks', distinct=True)* 100/ Count('views', distinct=True))
-        q2 = q2.order_by('id', '-views__time__date')  
 
         q3 = Ad.objects.values('id', 'name').filter((Q(clicks__time__date=F('views__time__date')) & Q(clicks__time__hour = F('views__time__hour'))))
         q3 = q3.annotate(views_time=F('views__time'), clicks_time=F('clicks__time')).datetimes('views__time', 'hour').values('id', 'name','views__time__date', 'views__time__hour')
         q3 = q3.annotate(clicks_count=Count('clicks', distinct=True), views_count=Count('views',distinct=True), total_count=Count('views', distinct=True)+Count('clicks',distinct=True))
         q3 = q3.annotate(rate=F('clicks_count') * 100 / F('views_count'))
         q3 = q3.order_by('id', '-views__time__date', '-views__time__hour')
+
+        
         context['first_stats'] = q3
 
         context['second_stats'] = Ad.objects.filter(clicks__ip = F('views__ip'), clicks__time__date=F('views__time__date'),  clicks__time__hour=F('views__time__hour')).aggregate(avg=Avg(F('clicks__time') - F('views__time')))
