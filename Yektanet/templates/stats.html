@@ -22,18 +22,21 @@
           <th>Time</th>
 
         </tr>
-        {% for entry in first_stats %}
+        {% for ad in ads %}
+        {% for time, stat in ad.stats.items %}
+
         <tr>
 
-     <td>{{ entry.id }}</td>
-     <td>{{ entry.name }} </td>
-     <td>{{ entry.views_count }} </td>
-     <td>{{ entry.clicks_count }} </td>
-     <td>{{ entry.total_count }}</td>
-     <td>{{ entry.rate }}</td>
-
-    <td> {{ entry.views__time__date }} {{ entry.views__time__hour}}</td>
-        </tr>
+          <td>{{ ad.id }}</td>
+          <td>{{ ad.name }} </td>
+          <td>{{ stat.0 }} </td>
+          <td>{{ stat.1 }} </td>
+          <td>{{ stat.2 }}</td>
+          <td>{{ stat.3 }}</td>
+     
+         <td> {{ time.0 }} {{ time.1}}</td>
+             </tr>
+        {% endfor %}
     {% endfor %}
 
       </table> 

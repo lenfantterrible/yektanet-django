@@ -1,6 +1,7 @@
 from django.db import models
 from PIL import Image 
-
+from django.db.models import Count
+import datetime
 
 class BaseAdvertising(models.Model):
 
@@ -17,6 +18,25 @@ class BaseAdvertising(models.Model):
 
 class Advertiser(BaseAdvertising):
     pass 
+
+class Action(models.Model):
+
+    ad = models.ForeignKey('Ad', on_delete=models.CASCADE)
+    time = models.DateTimeField(auto_now_add=True) 
+    ip = models.GenericIPAddressField(protocol="both", unpack_ipv4=False)
+
+    class Meta: 
+        abstract = True 
+
+class Click(Action): 
+    
+    class Meta:
+        default_related_name = 'clicks'
+
+class View(Action): 
+    
+    class Meta:
+        default_related_name = 'views'
 
 class Ad(BaseAdvertising):
     link = models.URLField(max_length=200)
@@ -38,6 +58,31 @@ class Ad(BaseAdvertising):
         else:
             super(Ad, self).save()
 
+    def inc_views(self, ip):
+        View.objects.create(ad=self, ip=ip)
+
+    def inc_clicks(self, ip):
+        Click.objects.create(ad=self, ip=ip)
+
+    @property
+    def stats(self): 
+
+        out = dict()
+        q1 = Click.objects.filter(ad=self).values('time__date', 'time__hour').annotate(count=Count('*')).order_by('-time__date', '-time__hour')
+        q2 = View.objects.filter(ad=self).values('time__date', 'time__hour').annotate(count=Count('*')).order_by('-time__date', '-time__hour')
+
+        for entry in q1:
+            out[(entry['time__date'], entry['time__hour'])] = (0, entry['count'], 0, 0) 
+
+        for entry in q2:
+            key = (entry['time__date'], entry['time__hour'])
+            if key in out:
+                out[key] = (entry['count'], out[key][1], entry['count'] + out[key][1], out[key][1] * 100 / entry['count']) 
+            else:
+                out[key] = (entry['count'],0, entry['count'], 0) 
+
+        return out
+
     @property
     def image_url(self):
 
@@ -46,23 +91,6 @@ class Ad(BaseAdvertising):
         return None
 
 
-class Action(models.Model):
 
-    ad = models.ForeignKey(Ad, on_delete=models.CASCADE)
-    time = models.DateTimeField(auto_now_add=True) 
-    ip = models.GenericIPAddressField(protocol="both", unpack_ipv4=False)
-
-    class Meta: 
-        abstract = True 
-
-class Click(Action): 
-    
-    class Meta:
-        default_related_name = 'clicks'
-
-class View(Action): 
-    
-    class Meta:
-        default_related_name = 'views'
 
 
