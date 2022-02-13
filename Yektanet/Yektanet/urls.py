@@ -21,6 +21,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('advertiser_management.urls')),
+    path('api/', include('api.urls')),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL,
