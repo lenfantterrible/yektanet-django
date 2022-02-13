@@ -2,6 +2,7 @@ from django.db import models
 from PIL import Image 
 from django.db.models import Count
 import datetime
+from django.contrib.auth.models import User
 
 class BaseAdvertising(models.Model):
 
@@ -17,7 +18,12 @@ class BaseAdvertising(models.Model):
         abstract = True
 
 class Advertiser(BaseAdvertising):
-    pass 
+    
+    author = models.ForeignKey(User, verbose_name=("author"), on_delete=models.CASCADE)
+    @property
+    def approved_ads(self):
+
+        return self.ads.filter(approved=True)
 
 class Action(models.Model):
 
@@ -64,6 +70,8 @@ class Ad(BaseAdvertising):
     def inc_clicks(self, ip):
         Click.objects.create(ad=self, ip=ip)
 
+
+    
     @property
     def stats(self): 
 
