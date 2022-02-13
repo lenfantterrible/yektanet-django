@@ -5,10 +5,12 @@ from rest_framework.views import APIView
 from advertiser_management.models import Advertiser, Ad
 from .serializers import AdSerializer, AdvertiserSerializer, AdCreateSerializer
 from rest_framework import generics
-from rest_framework import viewsets
+from rest_framework import viewsets, views
 from rest_framework.permissions import AllowAny,IsAdminUser
 from rest_framework.decorators import action
 from .permissions import IsAuthorOrReadOnly 
+from django.db.models import F, Avg 
+
 
 class AdvertiserViewset(viewsets.ModelViewSet):
     
@@ -22,6 +24,11 @@ class AdvertiserViewset(viewsets.ModelViewSet):
         if self.action == 'add_ad':
             return AdCreateSerializer
         return AdvertiserSerializer
+
+    def list(self, request):
+        stats = Ad.objects.filter(clicks__ip = F('views__ip'), clicks__time__date=F('views__time__date'),  clicks__time__hour=F('views__time__hour')).aggregate(avg_difference_time=Avg(F('clicks__time') - F('views__time')))
+        Serializer = self.get_serializer_class()
+        return Response({"stats": stats, "data": Serializer(self.get_queryset(), many=True).data})
 
     @action(detail=True, methods=['post'])
     def add_ad(self, request, pk=None):
@@ -46,3 +53,4 @@ class AdvertiserViewset(viewsets.ModelViewSet):
         else:
             permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
+
