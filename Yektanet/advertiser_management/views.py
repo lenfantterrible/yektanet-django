@@ -64,7 +64,6 @@ class StatsView(TemplateView):
         
         
         context['ads'] = Ad.objects.all()
-
         context['second_stats'] = Ad.objects.filter(clicks__ip = F('views__ip'), clicks__time__date=F('views__time__date'),  clicks__time__hour=F('views__time__hour')).aggregate(avg=Avg(F('clicks__time') - F('views__time')))
         
         return context
