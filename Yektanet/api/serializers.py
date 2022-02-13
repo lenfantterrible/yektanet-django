@@ -3,15 +3,16 @@ from advertiser_management.models import Advertiser, Ad
 
 
 class AdSerializer(serializers.ModelSerializer):
+    stats = serializers.CharField()
     class Meta:
         model = Ad
-        fields = '__all__'
+        fields = ('name', 'link', 'image_url', 'stats')
 
 class AdCreateSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = Ad
-        exclude = ('approved', 'advertiser')
+        exclude = ('approved', 'advertiser',)
 
 class AdvertiserSerializer(serializers.ModelSerializer):
     ads = serializers.SerializerMethodField()
@@ -22,5 +23,6 @@ class AdvertiserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Advertiser
         fields = ('name', 'author', 'ads')
+
 
 
