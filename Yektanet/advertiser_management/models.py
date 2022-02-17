@@ -99,7 +99,23 @@ class Ad(BaseAdvertising):
         return None
 
 
-class HourlyStats(models.Model):
+class BaseStats(models.Model):
+
     ad = models.OneToOneField('Ad', on_delete=models.CASCADE, related_name='hourly_stats')
     clicks_count = models.PositiveIntegerField(verbose_name="Clicks Count")
     views_count = models.PositiveIntegerField(verbose_name="Clicks Count")
+
+    def __str__(self) -> str:
+        return f'({self.ad},{self.views_count},{self.clicks_count}' 
+    
+    def __repr__(self) -> str:
+        return f'({self.ad},{self.views_count},{self.clicks_count}' 
+    
+    class Meta:
+        abstract = True
+
+class HourlyStats(BaseStats):
+    pass
+
+class DailyStats(BaseStats):
+    pass
