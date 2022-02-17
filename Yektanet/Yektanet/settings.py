@@ -140,3 +140,12 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 }
+
+CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_TIMEZONE = 'UTC'   
+CELERY_BEAT_SCHEDULE = {
+ 'send-summary-every-hour': {
+       'task': 'celery_task',
+       'schedule': 3600.0,
+    },
+}
